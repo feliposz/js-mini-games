@@ -1,0 +1,56 @@
+body {
+    background: #eee;
+    color: #666;
+    font-family: "Roboto", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 300;
+    margin: 30px;
+}
+
+a {
+    text-decoration: none;
+    color: #FF0080;
+}
+
+.container {
+    max-width: 1024px;
+    margin: auto;
+}
+
+.row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+h4 {
+    color: #777;
+    font-weight: 200;
+    font-size: 12px;
+    text-align: center;
+}
+
+.imgwrap {
+    background-color: #fff;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 3px;
+    position: relative;
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, .2);
+    transform: scale(1.0);
+    transition: transform 0.3s;
+}
+
+.imgwrap:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s;
+}
+

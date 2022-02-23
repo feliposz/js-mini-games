@@ -1,0 +1,36 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+html,
+body {
+    height: 100%;
+    font-family: monospace;
+    overflow: hidden;
+    background-color: #63d;
+    color: #fff;
+}
+
+.display {
+    display: table;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.wrap {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#result {
+    text-align: center;
+    font-size: 100px;
+}
+
+#detail {
+    text-align: center;
+    font-size: 50px;
+    color: #8c5;
+}

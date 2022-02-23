@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>WebGL Texture Mixing</title>
+    <script src="../shared/gl-matrix.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div></div>
+
+    <script type="x-shader/x-vertex" id="vertexShader">
+        attribute vec3 aPosition;
+        attribute vec2 aTexCoord;
+
+        uniform mat4 mModel;
+        uniform mat4 mView;
+        uniform mat4 mProj;
+
+        varying vec2 vTexCoord;
+
+        void main() {
+            gl_Position = mProj * mView * mModel * vec4(aPosition, 1.0);
+            vTexCoord = aTexCoord;
+        }
+    </script>
+
+    <script type="x-shader/x-fragment" id="fragmentShader">
+        precision mediump float;
+
+        uniform sampler2D uTexture0;
+        uniform sampler2D uTexture1;
+        uniform float uMix;
+        
+        varying vec2 vTexCoord;
+        
+        void main() {
+            vec4 t0 = texture2D(uTexture0, vTexCoord);
+            vec4 t1 = texture2D(uTexture1, vTexCoord);
+            gl_FragColor = mix(t0, t1, uMix);
+        }
+    </script>
+
+    <script src="game.js"></script>
+
+</body>
+
+</html>

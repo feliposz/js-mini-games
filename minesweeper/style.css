@@ -1,0 +1,13 @@
+* {
+    margin: 20px;
+    padding: 0;
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+}
+
+body {
+    background-color: rgb(25, 25, 50);
+}
