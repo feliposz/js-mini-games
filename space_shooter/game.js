@@ -4,13 +4,118 @@ const Acceleration = 0.05;
 const Friction = 0.9;
 const MaxSpeed = 8;
 const ShotSpeed = 15;
-const EnemySpeed = 5;
+const EnemySpeed = 4;
 const EnemySpawnRate = 1;
-const EnemyMinRadius = 10;
+const EnemyMinRadius = 30;
 const ShotDamage = 2;
 const MaxEnergy = 100;
 
+var hobbies = [{
+        title: "Arts",
+        color: {
+            r: 200,
+            g: 50,
+            b: 50
+        },
+        enemies: [
+            "Drawing",
+            "Piano",
+            "Guitar",
+            "Hard rock",
+            "Heavy metal",
+            "Classical music"
+        ]
+    },
+    {
+        title: "Games",
+        color: {
+            r: 80,
+            g: 150,
+            b: 200
+        },
+        enemies: [
+            "Boardgames",
+            "PC Games",
+            "Rubik's cube",
+            "Xbox 360",
+            "Playstation 3",
+            "PSP"
+        ]
+    },
+    {
+        title: "Movies & TV",
+        color: {
+            r: 200,
+            g: 90,
+            b: 70
+        },
+        enemies: [
+            "Star Wars",
+            "Marvel Universe",
+            "Breaking Bad",
+            "Game of Thrones",
+            "Homeland",
+            "House of Cards",
+            "Stranger Things"
+        ]
+    },
+    {
+        title: "Books",
+        color: {
+            r: 50,
+            g: 200,
+            b: 50
+        },
+        enemies: [
+            "Lord of the Rings",
+            "O Hobbit",
+            "Harry Potter",
+            "Animal Farm",
+            "Brave New World",
+            "The Bible"
+        ]
+    },
+    {
+        title: "Culture",
+        color: {
+            r: 150,
+            g: 50,
+            b: 150
+        },
+        enemies: [
+            "Travel",
+            "Languages",
+            "English +++++",
+            "German --",
+            "French +",
+            "Spanish ++",
+            "Japanese -----"
+        ]
+    },
+    {
+        title: "The End?",
+        color: {
+            r: 10,
+            g: 10,
+            b: 10
+        },
+        enemies: [
+            "?",
+            "??",
+            "???",
+            "????",
+            "?????"
+        ]
+    }
+];
+
+var levelNum = 0;
+var enemyNum = 0;
+var activeEnemies = hobbies[levelNum].enemies.length;
+
 var canvas = document.getElementById("canvas");
+canvas.width = window.innerWidth - 20;
+canvas.height = window.innerHeight - 20;
 var ctx = canvas.getContext("2d");
 var shots = [];
 var enemies = [];
@@ -122,12 +227,14 @@ function Controller() {
 
 // TODO: Make multiple enemy types
 
-function Enemy(x, y, direction) {
+function Enemy(x, y, direction, text, color) {
     this.x = x;
     this.y = y;
-    this.radius = 30;
+    this.radius = 60;
     this.direction = direction;
     this.active = true;
+    this.text = text;
+    this.color = color;
 }
 
 Enemy.prototype.move = function () {
@@ -176,19 +283,27 @@ Enemy.prototype.draw = function () {
     if (this.active) {
         ctx.beginPath();
         var n = Math.floor(Math.random() * 32);
-        ctx.fillStyle = "rgb(" + (128 + n) + "," + 0 + "," + Math.floor(Math.abs(180 - this.direction) / 180 * 255) + ")";
+        var r = (this.color.r + (128 + n)) / 2;
+        var g = this.color.g;
+        var b = (this.color.b + Math.floor(Math.abs(180 - this.direction) / 180 * 255)) / 2;
+        ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
         ctx.arc(canvas.width / 2 + this.x, canvas.height / 2 - this.y, this.radius, 0, Math.PI * 2);
         ctx.fill();
         ctx.closePath();
+        ctx.fillStyle = "#fff";
+        ctx.font = "20px monospace";
+        var tw = ctx.measureText(this.text).width;
+        ctx.fillText(this.text, canvas.width / 2 + this.x - tw / 2, canvas.height / 2 - this.y + 5);
     }
 }
 
 function Shot(x, y, direction) {
     this.x = x;
     this.y = y;
-    this.radius = 3;
-    this.vx = ShotSpeed * Math.cos(direction / 180 * Math.PI);
-    this.vy = ShotSpeed * Math.sin(direction / 180 * Math.PI);
+    this.radius = 5;
+    var disturb = 0.9 + Math.random() * 0.2;
+    this.vx = disturb * ShotSpeed * Math.cos(direction / 180 * Math.PI);
+    this.vy = disturb * ShotSpeed * Math.sin(direction / 180 * Math.PI);
     this.lifetime = 75;
     this.active = true;
 }
@@ -228,7 +343,7 @@ function Player(x, y) {
     this.vx = 0;
     this.vy = 0;
     this.direction = 0;
-    this.geometry = [13, 0, -13, -8, -13, 8];
+    this.geometry = [20, 0, -20, -12, -20, 12];
     this.active = true;
     this.energy = MaxEnergy;
     this.charged = true;
@@ -335,7 +450,7 @@ function Player(x, y) {
         if (this.charged) {
             var s = new Shot(this.x, this.y, this.direction);
             shots.push(s);
-            this.energy -= 1;
+            //this.energy -= 1;
             if (this.energy < 0) {
                 this.charged = false;
             }
@@ -379,6 +494,10 @@ function DrawScore() {
     ctx.fillStyle = "white";
     ctx.fillText("Score: " + score, 50, 50);
     ctx.fillText("Hi Score: " + hiscore, canvas.width - 200, 50);
+    ctx.fillStyle = "rgb(" + hobbies[levelNum].color.r + "," + hobbies[levelNum].color.g + "," + hobbies[levelNum].color.b + ")";
+    ctx.font = "40px monospace";
+    var tw = ctx.measureText(hobbies[levelNum].title).width;
+    ctx.fillText(hobbies[levelNum].title, canvas.width / 2 - tw / 2, 50);
 }
 
 function CenterMessage(text, y, color) {
@@ -397,13 +516,21 @@ function SpawnEnemy() {
         x = (0.5 - Math.random()) * canvas.width;
         y = (0.5 - Math.random()) * canvas.height;
     } while (VectorMag(x - player.x, y - player.y) < 30 * EnemySpeed);
-    enemies.push(new Enemy(x, y, Math.random() * 360));
+
+    if (levelNum < hobbies.length && enemyNum < hobbies[levelNum].enemies.length) {
+        var text = hobbies[levelNum].enemies[enemyNum];
+        var color = hobbies[levelNum].color;
+        enemyNum++;
+        enemies.push(new Enemy(x, y, Math.random() * 360, text, color));
+    }
 }
 
 function ResetGame() {
     player = new Player(0, 0);
     shots = [];
-    enemies = [];
+    if (!enemies) {
+        enemies = [];
+    }
     if (score > hiscore) {
         hiscore = score;
     }
@@ -445,7 +572,7 @@ function Loop() {
                 }
             }
             if (player.active && VectorMag(player.x - enemies[j].x, player.y - enemies[j].y) < enemies[j].radius) {
-                enemies[j].damage(ShotDamage);
+                //enemies[j].damage(ShotDamage);
                 player.die();
             }
         }
@@ -467,6 +594,12 @@ function Loop() {
         } else {
             enemies.splice(i, 1);
             score++;
+            activeEnemies--;
+            if (activeEnemies <= 0) {
+                levelNum = (levelNum + 1) % hobbies.length;
+                enemyNum = 0;
+                activeEnemies = hobbies[levelNum].enemies.length;
+            }
         }
     }
 

@@ -1,9 +1,13 @@
 const Gravity = 0.1;
-const MaxParticles = 150;
-const MinInterval = 30;
-const MaxInterval = 150;
+const MaxParticles = 200;
+const MinInterval = 10;
+const MaxInterval = 100;
 
 var cv = document.getElementById("cv");
+
+cv.width = window.innerWidth - 20;
+cv.height = window.innerHeight - 20;
+
 var ct = cv.getContext("2d");
 
 var countdown = 0;
@@ -50,9 +54,21 @@ function RandomColor() {
     return "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")";
 }
 
+
 function UpdateFrame() {
 
-    var i, p, x, y, vx, vy, angle, speed;
+    var i, j, k, p, x, y, vx, vy, angle, speed, ascii;
+
+    ascii = [
+        " 8888888888 8888888 888888888  8888888888 888       888  888888888  888888888  888    888   88888888  ",
+        " 888          888   888   8888 888        888   8   888 88888 88888 888   8888 888   888   8888  8888 ",
+        " 888          888   888    888 888        888  888  888 888     888 888    888 888  888    88888      ",
+        " 8888888      888   888   8888 8888888    888 88888 888 888     888 888   8888 8888888      8888888   ",
+        " 888          888   888888888  888        8888888888888 888     888 888888888  88888888        888888 ",
+        " 888          888   888 8888   888        888888 888888 888     888 888 8888   888  8888         8888 ",
+        " 888          888   888  8888  888        88888   88888 88888 88888 888  8888  888   8888  8888  8888 ",
+        " 888        8888888 888   8888 8888888888 8888     8888  888888888  888   8888 888    8888  88888888  ",
+    ];
 
     countdown--;
 
@@ -73,6 +89,32 @@ function UpdateFrame() {
         }
         countdown = MinInterval + Math.random() * (MaxInterval - MinInterval);
     }
+
+    var horStep = cv.width / 120;
+    var verStep = cv.height / 40;
+    var horOff = -horStep * ascii[0].length / 2;
+    var verOff = -verStep * ascii.length / 2;
+
+    color = "rgb(255,255,192)";
+    for (k = 0; k < 100; k++) {
+        j = Math.trunc(Math.random() * ascii.length);
+        i = Math.trunc(Math.random() * ascii[0].length);
+
+        if (ascii[j][i] !== " ") {
+            x = cv.width / 2 + horOff + horStep * i + Math.random() * horStep;
+            y = cv.height / 2 + verOff + verStep * j + Math.random() * verStep;
+            speed = Math.random() * .3;
+            angle = -Math.PI * Math.random() * 2;
+            vx = Math.cos(angle) * speed;
+            vy = Math.sin(angle) * speed;
+            size = 1 + Math.random() * 4;
+            lifetime = 20 + Math.random() * 50;
+            p = new Particle(x, y, vx, vy, size, lifetime, color);
+            ps.push(p);
+        }
+
+    }
+
 
     // Remove inactive particles
     for (i = ps.length - 1; i >= 0; i--) {
