@@ -345,6 +345,7 @@ function uncover(i, j) {
 }
 
 function checkFlags() {
+    var i, j;
     if (flagsLeft > 0) {
         return;
     } else {
